@@ -220,9 +220,18 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 28px;
+      padding: 0;
+      overflow: hidden;
       box-shadow: 0 22px 60px rgba(236,72,153,0.34);
       animation: floatingPhoto 5s ease-in-out infinite;
+    }
+
+    .photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 999px;
     }
 
     @keyframes floatingPhoto {
@@ -574,10 +583,7 @@
               <h2>Главная героиня праздника</h2>
 
               <div class="photo-box">
-                <div>
-                  <div class="emoji">💖</div>
-                  <p>photo_2021.jpg<br>с букетом ромашек 🌼</p>
-                </div>
+                <img src="photo_2021.jpg" alt="Фото мамы">
               </div>
 
               <div class="hero-note">
