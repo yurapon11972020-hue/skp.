@@ -1,0 +1,448 @@
+import React, { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, Sparkles, Gift, Stars, Flower2, PartyPopper, Crown } from "lucide-react";
+
+const floatingItems = Array.from({ length: 18 }, (_, i) => ({
+  id: i,
+  left: `${Math.random() * 100}%`,
+  top: `${Math.random() * 100}%`,
+  duration: 4 + Math.random() * 6,
+  delay: Math.random() * 4,
+  size: 14 + Math.random() * 24,
+}));
+
+const reasons = [
+  "Ты даришь тепло даже в самые обычные дни.",
+  "С тобой любой дом становится самым уютным местом в мире.",
+  "Твоя улыбка — это настоящее волшебство.",
+  "Ты умеешь поддержать, вдохновить и сделать всё красивее.",
+  "Ты самая нежная, сильная и прекрасная мама.",
+  "Рядом с тобой всегда спокойно, светло и хорошо.",
+];
+
+const wishes = [
+  "Пусть каждый день приносит радость, ромашки и приятные сюрпризы 🌼",
+  "Пусть глаза сияют от счастья, а сердце будет спокойным и лёгким ✨",
+  "Пусть сбывается всё, о чём ты мечтаешь, даже самое красивое 💖",
+  "Пусть рядом будут любовь, забота, здоровье и много поводов улыбаться 🎀",
+];
+
+function FloatingDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {floatingItems.map((item, index) => (
+        <motion.div
+          key={item.id}
+          className="absolute"
+          style={{ left: item.left, top: item.top }}
+          animate={{
+            y: [0, -18, 0, 14, 0],
+            x: [0, 10, -8, 6, 0],
+            rotate: [0, 10, -8, 6, 0],
+            opacity: [0.35, 0.95, 0.4],
+            scale: [1, 1.15, 0.95, 1.08, 1],
+          }}
+          transition={{
+            duration: item.duration,
+            delay: item.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          {index % 3 === 0 ? (
+            <Heart size={item.size} className="fill-pink-300 text-pink-300/80 drop-shadow-[0_0_15px_rgba(244,114,182,0.45)]" />
+          ) : index % 3 === 1 ? (
+            <Sparkles size={item.size} className="text-fuchsia-200 drop-shadow-[0_0_18px_rgba(244,114,182,0.55)]" />
+          ) : (
+            <Stars size={item.size} className="text-rose-200 drop-shadow-[0_0_18px_rgba(251,113,133,0.45)]" />
+          )}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+function GlitterButton({ onClick, children }) {
+  return (
+    <motion.button
+      whileHover={{ scale: 1.04, y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className="relative overflow-hidden rounded-full border border-white/40 bg-white/25 px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_40px_rgba(236,72,153,0.28)] backdrop-blur-md"
+    >
+      <span className="relative z-10 flex items-center gap-2">{children}</span>
+      <motion.span
+        className="absolute inset-y-0 left-[-30%] w-20 bg-white/35 blur-xl"
+        animate={{ x: [0, 220] }}
+        transition={{ duration: 2.6, repeat: Infinity, ease: "linear" }}
+      />
+    </motion.button>
+  );
+}
+
+function Fireworks({ burstKey }) {
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 36 }, (_, i) => {
+        const angle = (Math.PI * 2 * i) / 36;
+        const distance = 90 + Math.random() * 130;
+        return {
+          id: i,
+          x: Math.cos(angle) * distance,
+          y: Math.sin(angle) * distance,
+          delay: Math.random() * 0.2,
+          size: 6 + Math.random() * 10,
+        };
+      }),
+    [burstKey]
+  );
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        key={burstKey}
+        className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        {particles.map((p) => (
+          <motion.div
+            key={`${burstKey}-${p.id}`}
+            className="absolute rounded-full bg-white shadow-[0_0_24px_rgba(255,255,255,0.95)]"
+            style={{ width: p.size, height: p.size }}
+            initial={{ x: 0, y: 0, scale: 0.3, opacity: 1 }}
+            animate={{ x: p.x, y: p.y, scale: [0.5, 1, 0.2], opacity: [1, 1, 0] }}
+            transition={{ duration: 1.4, delay: p.delay, ease: "easeOut" }}
+          />
+        ))}
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+function FallingPetals() {
+  const petals = useMemo(
+    () =>
+      Array.from({ length: 22 }, (_, i) => ({
+        id: i,
+        left: `${Math.random() * 100}%`,
+        delay: Math.random() * 5,
+        duration: 8 + Math.random() * 8,
+        drift: -40 + Math.random() * 80,
+        rotate: 120 + Math.random() * 220,
+        symbol: i % 3 === 0 ? "🌼" : i % 3 === 1 ? "🌸" : "✨",
+      })),
+    []
+  );
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {petals.map((petal) => (
+        <motion.div
+          key={petal.id}
+          className="absolute -top-10 text-2xl opacity-70"
+          style={{ left: petal.left }}
+          animate={{ y: [0, 900], x: [0, petal.drift], rotate: [0, petal.rotate] }}
+          transition={{
+            duration: petal.duration,
+            delay: petal.delay,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          {petal.symbol}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+export default function BirthdayMomGirlySite() {
+  const [burstKey, setBurstKey] = useState(0);
+  const [showLetter, setShowLetter] = useState(false);
+  const [showHearts, setShowHearts] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setShowHearts((v) => !v);
+    }, 2400);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_#ffd7ef_0%,_#f7a8d8_25%,_#d784ff_55%,_#7c4dff_100%)] text-white">
+      <div className="relative min-h-screen">
+        <FloatingDecor />
+        <FallingPetals />
+
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.12),rgba(255,255,255,0.02))]" />
+        <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8 sm:px-10 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 flex items-center justify-between"
+          >
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-2 text-sm backdrop-blur-md">
+              <Crown size={16} className="text-yellow-200" />
+              Самый нежный день в году
+            </div>
+            <div className="hidden rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm backdrop-blur-md md:block">
+              Для любимой мамы 💗
+            </div>
+          </motion.div>
+
+          <div className="grid flex-1 items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+                className="mb-6 inline-flex items-center gap-2 rounded-full border border-pink-100/30 bg-white/10 px-4 py-2 text-sm text-pink-50 backdrop-blur-md"
+              >
+                <Sparkles size={16} className="text-pink-100" />
+                С любовью, нежностью, ромашками и маленьким волшебством
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 25 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.8 }}
+                className="max-w-3xl text-5xl font-black leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl"
+              >
+                С днём рождения,
+                <span className="block bg-gradient-to-r from-white via-pink-50 to-fuchsia-100 bg-clip-text text-transparent drop-shadow-[0_8px_30px_rgba(255,255,255,0.25)]">
+                  мамочка! ✨
+                </span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 25 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="mt-6 max-w-2xl text-lg leading-8 text-white/90 sm:text-xl"
+              >
+                Этот сайт — маленькая праздничная открытка только для тебя. Здесь собраны тёплые слова,
+                искренние пожелания и немного сияния, потому что ты заслуживаешь самый красивый день.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+                className="mt-8 flex flex-wrap gap-4"
+              >
+                <GlitterButton onClick={() => setBurstKey((v) => v + 1)}>
+                  <PartyPopper size={18} />
+                  Запустить магию
+                </GlitterButton>
+                <GlitterButton onClick={() => setShowLetter((v) => !v)}>
+                  <Gift size={18} />
+                  Открыть письмо
+                </GlitterButton>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.9 }}
+                className="mt-8 grid max-w-2xl gap-4 sm:grid-cols-3"
+              >
+                {[
+                  { title: "Нежность", text: "в каждом слове" },
+                  { title: "Любовь", text: "в каждом моменте" },
+                  { title: "Волшебство", text: "в каждом эффекте" },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="rounded-3xl border border-white/25 bg-white/12 p-5 shadow-[0_20px_50px_rgba(131,58,180,0.18)] backdrop-blur-xl"
+                  >
+                    <div className="text-lg font-bold">{item.title}</div>
+                    <div className="mt-1 text-sm text-white/80">{item.text}</div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 24 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.9 }}
+              className="relative"
+            >
+              <div className="absolute -inset-8 rounded-[38px] bg-white/10 blur-3xl" />
+              <div className="relative rounded-[34px] border border-white/30 bg-white/14 p-5 shadow-[0_30px_100px_rgba(109,40,217,0.35)] backdrop-blur-2xl">
+                <div className="rounded-[28px] border border-white/35 bg-[linear-gradient(180deg,rgba(255,255,255,0.24),rgba(255,255,255,0.1))] p-5">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div>
+                      <p className="text-sm uppercase tracking-[0.25em] text-white/70">Queen card</p>
+                      <h2 className="mt-2 text-2xl font-bold">Главная героиня праздника</h2>
+                    </div>
+                    <div className="rounded-full bg-white/20 p-3">
+                      <Flower2 className="text-pink-100" />
+                    </div>
+                  </div>
+
+                  <div className="relative overflow-hidden rounded-[26px] border border-white/30 bg-[linear-gradient(135deg,rgba(255,255,255,0.26),rgba(255,255,255,0.08))] p-8">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.28),transparent_40%)]" />
+                    <motion.div
+                      animate={{ y: [0, -6, 0], rotate: [0, 1.5, -1.5, 0] }}
+                      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                      className="relative mx-auto flex h-64 w-64 items-center justify-center rounded-full border-4 border-white/40 bg-[radial-gradient(circle,_rgba(255,255,255,0.85)_0%,_rgba(255,227,241,0.75)_35%,_rgba(244,114,182,0.35)_100%)] shadow-[0_20px_60px_rgba(236,72,153,0.35)]"
+                    >
+                      <div className="text-center">
+                        <div className="text-7xl">💖</div>
+                        <p className="mt-3 text-lg font-semibold text-fuchsia-900">Тут может быть фото мамы</p>
+                        <p className="mt-1 text-sm text-fuchsia-800/80">Можно вставить фото мамы с букетом ромашек 🌼</p>
+                      </div>
+                    </motion.div>
+
+                    <div className="relative mt-6 text-center">
+                      <div className="text-2xl font-bold">Самая красивая, добрая и любимая — как нежная ромашка</div>
+                      <div className="mt-2 text-white/85">
+                        Та, которая делает всё вокруг теплее, уютнее и светлее.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        <Fireworks burstKey={burstKey} />
+
+        <AnimatePresence>
+          {showHearts && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="pointer-events-none absolute inset-x-0 top-24 flex justify-center"
+            >
+              <motion.div
+                initial={{ y: 0, scale: 0.8 }}
+                animate={{ y: [-10, -38], scale: [0.8, 1.15], opacity: [0.9, 0] }}
+                transition={{ duration: 2.1, ease: "easeOut" }}
+                className="text-6xl"
+              >
+                💗
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <section className="relative mx-auto max-w-7xl px-6 pb-10 sm:px-10 lg:px-12">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            className="rounded-[32px] border border-white/25 bg-white/12 p-7 shadow-[0_18px_60px_rgba(124,77,255,0.24)] backdrop-blur-xl"
+          >
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/18 px-4 py-2 text-sm">
+              <Heart size={16} className="fill-pink-200 text-pink-200" />
+              Почему ты самая лучшая
+            </div>
+            <div className="grid gap-3">
+              {reasons.map((reason, idx) => (
+                <motion.div
+                  key={reason}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="rounded-2xl border border-white/20 bg-white/10 p-4 text-white/90"
+                >
+                  <span className="mr-2 text-pink-100">💞</span>
+                  {reason}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            className="rounded-[32px] border border-white/25 bg-white/12 p-7 shadow-[0_18px_60px_rgba(236,72,153,0.22)] backdrop-blur-xl"
+          >
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/18 px-4 py-2 text-sm">
+              <Sparkles size={16} className="text-yellow-100" />
+              Пожелания для тебя
+            </div>
+            <div className="space-y-4">
+              {wishes.map((wish, idx) => (
+                <motion.div
+                  key={wish}
+                  initial={{ opacity: 0, x: 16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.06 }}
+                  className="rounded-2xl border border-white/20 bg-[linear-gradient(135deg,rgba(255,255,255,0.18),rgba(255,255,255,0.06))] p-4 text-white/90"
+                >
+                  {wish}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-14 sm:px-10 lg:px-12">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          className="relative overflow-hidden rounded-[36px] border border-white/30 bg-[linear-gradient(135deg,rgba(255,255,255,0.2),rgba(255,255,255,0.08))] px-6 py-10 shadow-[0_25px_80px_rgba(91,33,182,0.28)] backdrop-blur-2xl sm:px-10"
+        >
+          <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-pink-200/20 blur-3xl" />
+          <div className="absolute -bottom-20 -left-12 h-56 w-56 rounded-full bg-fuchsia-200/20 blur-3xl" />
+
+          <div className="relative text-center">
+            <motion.div
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{ duration: 2.6, repeat: Infinity }}
+              className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full border border-white/35 bg-white/18"
+            >
+              <Gift size={34} className="text-pink-50" />
+            </motion.div>
+            <h2 className="text-3xl font-black sm:text-4xl">Главное послание для мамы</h2>
+            <p className="mx-auto mt-4 max-w-3xl text-lg leading-8 text-white/90">
+              Спасибо тебе за любовь, заботу, поддержку и огромное доброе сердце. Пусть этот день будет таким же
+              красивым, светлым, нежным и наполненным ромашками, как ты сама. Ты — настоящее сокровище нашей семьи.
+            </p>
+
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: showLetter ? 1 : 0, height: showLetter ? "auto" : 0 }}
+              transition={{ duration: 0.45 }}
+              className="mx-auto mt-6 max-w-3xl overflow-hidden"
+            >
+              <div className="rounded-[28px] border border-white/25 bg-white/14 p-6 text-left backdrop-blur-xl">
+                <p className="text-lg leading-8 text-white/95">
+                  Мамочка, с днём рождения! Я очень тебя люблю и хочу, чтобы ты всегда улыбалась, чувствовала себя
+                  счастливой, любимой и вдохновлённой. Пусть жизнь дарит тебе побольше красоты, цветов, отдыха,
+                  приятных моментов и исполнения самых заветных желаний. Спасибо тебе за всё, что ты делаешь, и за
+                  то, какая ты у меня прекрасная. 💐
+                </p>
+              </div>
+            </motion.div>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <GlitterButton onClick={() => setShowLetter((v) => !v)}>
+                <Heart size={18} />
+                {showLetter ? "Скрыть письмо" : "Показать письмо"}
+              </GlitterButton>
+              <GlitterButton onClick={() => setBurstKey((v) => v + 1)}>
+                <Sparkles size={18} />
+                Ещё больше сияния
+              </GlitterButton>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+    </div>
+  );
+}
